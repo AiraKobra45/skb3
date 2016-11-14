@@ -10,7 +10,11 @@ mongoose.connect('mongodb://publicdb.mgbeta.ru/airakobra45_skb3');
 const app = express();
 app.use(cors());
 
-app.get('/users', (req, res) => {
+app.get('/users', async(req, res) => {
+  const users = await User.find();
+  return res.send();
+});
+app.get('/pets', async(req, res) => {
 
 });
 app.post('/data', (req, res) => {
