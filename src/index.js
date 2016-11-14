@@ -3,6 +3,8 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import Promise from 'bluebird';
 import saveDataInDb from './saveDataInDb';
+import Pet from './models/Pet';
+import User from './models/User';
 
 mongoose.Promise = Promise;
 mongoose.connect('mongodb://publicdb.mgbeta.ru/airakobra45_skb3');
@@ -12,28 +14,29 @@ app.use(cors());
 
 app.get('/users', async(req, res) => {
   const users = await User.find();
-  return res.send();
+  return res.json(users);
 });
 app.get('/pets', async(req, res) => {
-
+  const pets = await Pet.find();
+  return res.json(pets);
 });
 app.post('/data', (req, res) => {
   const data = req.body;
-  {
-    user: {
-      name: 'AiraKobra45'
-    },
-    pets: [
-      {
-        name: 'Марсик',
-        type: 'cat'
-      },
-      {
-        name: 'Рикки',
-        type: 'dog'
-      }
-    ]
-  };
+// {
+//   user: {
+//     name: 'AiraKobra45'
+//   };
+//   pets: [
+//     {
+//       name: 'Марсик',
+//       type: 'cat'
+//     },
+//     {
+//       name: 'Рикки',
+//       type: 'dog'
+//     }
+//   ]
+// };
   saveDataInDb(data);
 
 });
