@@ -14,7 +14,8 @@ app.get('/users', (req, res) => {
 
 });
 app.post('/data', (req, res) => {
-  const data = {
+  const data = req.body;
+  {
     user: {
       name: 'AiraKobra45'
     },
