@@ -5,41 +5,51 @@ import Promise from 'bluebird';
 import saveDataInDb from './saveDataInDb';
 import Pet from './models/Pet';
 import User from './models/User';
+import bodyParser from 'body-parser';
 
 mongoose.Promise = Promise;
 mongoose.connect('mongodb://publicdb.mgbeta.ru/airakobra45_skb3');
 
 const app = express();
 app.use(cors());
+app.use(bodyParser.json());
 
 app.get('/users', async(req, res) => {
   const users = await User.find();
   return res.json(users);
 });
 app.get('/pets', async(req, res) => {
-  const pets = await Pet.find();
+  const pets = await Pet.find().populate('owner');
   return res.json(pets);
 });
 app.post('/data', (req, res) => {
   const data = req.body;
-// {
-//   user: {
-//     name: 'AiraKobra45'
-//   };
-//   pets: [
-//     {
-//       name: 'Марсик',
-//       type: 'cat'
-//     },
-//     {
-//       name: 'Рикки',
-//       type: 'dog'
-//     }
-//   ]
-// };
-  saveDataInDb(data);
-
+  console.log(data);
+  return res.json({
+    //"status": "OK",
+    data
+  });
 });
+
+
+//{
+//  user: {
+//    name: 'AiraKobra45'
+//  };
+//  pets: [
+//    {
+//      name: 'Марсик',
+//      type: 'cat'
+//    },
+//    {
+//      name: 'Рикки',
+//      type: 'dog'
+//    }
+//  ]
+//};
+  //saveDataInDb(data);
+
+
 
 
 
