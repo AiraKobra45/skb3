@@ -15,9 +15,9 @@ mongoose.connect('mongodb://publicdb.mgbeta.ru/airakobra45_skb3');
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
-app.use(isAdmin);
+//app.use(isAdmin);
 
-app.get('/clear', async(req, res) => {
+app.get('/clear', isAdmin, async(req, res) => {
   await User.remove({});
   await Pet.remove({});
   return res.send('OK');
