@@ -3,6 +3,7 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import Promise from 'bluebird';
 import bodyParser from 'body-parser';
+
 import saveDataInDb from './saveDataInDb';
 import Pet from './models/Pet';
 import User from './models/User';
@@ -20,69 +21,30 @@ app.get('/users', async(req, res) => {
 });
 app.get('/pets', async(req, res) => {
   const pets = await Pet.find().populate('owner');
-  return res.json(pets);
+  return res.json(pets.slice(62));
 });
 app.post('/data', async(req, res) => {
   const data = req.body;
-  return res.json(await saveDataInDb(data));
+  if (!data.user) return res.status(400).send('User required');
+  if (!data.pets) data.pets = [];
+
+  const user = await User.findOne({
+    name: data.user.name,
+  });
+  if (user) return res.status(400).send('User: ' + user.name + ' is exists!');
+
+  try {
+    const result = await saveDataInDb(data);
+    return res.json(result);
+  } catch (err) {
+
+    return res.status(500).json(err);
+  }
+
+
+
 });
 
 app.listen(3000, () => {
   console.log('Your app listening on port 3000!');
 });
-
-//async function saveInDb(data) {
-//  try {
-//    const user = new User (data.user);
-//    await user.save();
-//    const promises = data.pets.map(pet => {
-//      const petData = Object.assign({}, pet, {
-//        owner: user._id
-//      });
-//      const pet = new Pet(petData);
-//      return pet.save();
-//    });
-//    await Promise.all(promises);
-//    console.log('success');
-//  } catch (err) {
-//    console.log('error', err);
-//  }
-//
-//  data.user
-//}
-
-//const kitty = new Pet({
-//  name: 'AFHEAF',
-//  type: 'cat'
-//});
-//
-//kitty.save()
-//  .then(() => {
-//    console.log('success');
-//})
-//  .catch((err) => {
-//    console.log('err', err);
-//});
-
-
-//app.get('/', (req, res) => {
-//  res.json({
-//    hello: 'JS World',
-//  });
-//});
-//
-//var mongoose = require('mongoose');
-//mongoose.connect('mongodb://localhost/test');
-//
-//var Cat = mongoose.model('Cat', { name: String });
-//
-//var kitty = new Cat({ name: 'Zildjian' });
-//kitty.save(function (err) {
-//  if (err) {
-//    console.log(err);
-//  } else {
-//    console.log('meow');
-//  }
-//});
-
-
