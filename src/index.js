@@ -7,6 +7,7 @@ import bodyParser from 'body-parser';
 import saveDataInDb from './saveDataInDb';
 import Pet from './models/Pet';
 import User from './models/User';
+import isAdmin from './middlewares/isAdmin';
 
 mongoose.Promise = Promise;
 mongoose.connect('mongodb://publicdb.mgbeta.ru/airakobra45_skb3');
@@ -14,14 +15,20 @@ mongoose.connect('mongodb://publicdb.mgbeta.ru/airakobra45_skb3');
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
+app.use(isAdmin);
 
+app.get('/clear', async(req, res) => {
+  await User.remove({});
+  await Pet.remove({});
+  return res.send('200 OK');
+});
 app.get('/users', async(req, res) => {
   const users = await User.find();
   return res.json(users);
 });
 app.get('/pets', async(req, res) => {
   const pets = await Pet.find().populate('owner');
-  return res.json(pets.slice(62));
+  return res.json(pets.slice(+pets.length-2));
 });
 app.post('/data', async(req, res) => {
   const data = req.body;
@@ -31,7 +38,7 @@ app.post('/data', async(req, res) => {
   const user = await User.findOne({
     name: data.user.name,
   });
-  if (user) return res.status(400).send('User: ' + user.name + ' is exists!');
+  if (user) return res.status(400).send('User: "' + user.name + '" is exists!');
 
   try {
     const result = await saveDataInDb(data);
