@@ -1,6 +1,7 @@
 export default (req,  res, next) => {
+  //console.log(req.header, req.headers.user, req.headers.user === 'admin' );
   if (req.headers.user === 'admin') {
-    next();
+    return next();
   }
-  next('access error');
+  return next('access error');
 };

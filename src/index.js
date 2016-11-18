@@ -20,7 +20,7 @@ app.use(isAdmin);
 app.get('/clear', async(req, res) => {
   await User.remove({});
   await Pet.remove({});
-  return res.send('200 OK');
+  return res.send('OK');
 });
 app.get('/users', async(req, res) => {
   const users = await User.find();
@@ -28,7 +28,7 @@ app.get('/users', async(req, res) => {
 });
 app.get('/pets', async(req, res) => {
   const pets = await Pet.find().populate('owner');
-  return res.json(pets.slice(+pets.length-2));
+  return res.json(pets); //json(pets.slice(+pets.length-2)
 });
 app.post('/data', async(req, res) => {
   const data = req.body;
