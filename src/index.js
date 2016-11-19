@@ -72,7 +72,7 @@ app.get('/task3A', async(req, res) => {
 app.get('/task3A/:id1', async(req, res) => {
   const id = req.params;
   if (id.id1 === 'volumes') {
-    return await res.json({"C:":"41943040B","D:":"16777216B"})
+    return res.json(volume());//await res.json({"C:":"41943040B","D:":"16777216B", "len": len})
   } else {
     const ans = pc[id.id1];
     if (ans === undefined) {
@@ -118,6 +118,15 @@ app.get('/task3A/:id1/:id2/:id3', async(req, res) => {
     return await res.status(404).send('Not Found');
   }
 });
+
+function volume() {
+  var result = {};
+  pc.hdd.forEach(drive => result[drive.volume] = (result[drive.volume] || 0) + drive.size);
+  for (var drive in result) {
+    result[drive] = result[drive] + 'B';
+  }
+  return result;
+}
 
 
 app.listen(3000, () => {
