@@ -4,7 +4,6 @@ import mongoose from 'mongoose';
 import Promise from 'bluebird';
 import bodyParser from 'body-parser';
 import fetch from 'isomorphic-fetch';
-import canonize from './functions/regExp';
 //import fetch from 'isomorphic-fetch';
 //require('es6-promise').polyfill();
 //require('isomorphic-fetch');
