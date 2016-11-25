@@ -149,9 +149,45 @@ app.get('/task3B', async(req, res) => {
 });
 
 app.get('/task3B/users', async(req, res) => {
-  return await res.json(base.users);
+  //console.log('1');
+  const type = req.query.havePet;
+  if (type === 'cat') {
+    //console.log('2');
+    return await res.json(usersHavePet(true));
+  } else {
+    //console.log('3');
+    return await res.json(base.users);
+  }
 
 });
+
+function usersHavePet(bool ) {
+  //console.log('2*1');
+  let timeBase = [];
+  let usersLen = base.users.length;
+  let petsLen = base.pets.length;
+  for (var i = 0; i < usersLen; i++) {
+    //console.log('2*2');
+    for (var v = 0; v < petsLen; v++) {
+      //console.log('2*3');
+      if ( base.users[i].Id == base.pets[v].userId) {
+        //console.log('2*4');
+        console.log(i + '_' + v);
+        if (base.pets[v].type == 'cat') {
+         // console.log('2*5');
+          timeBase.push(base.users[i]);
+          console.log(base.users[i].Id + '___' + base.pets[v].userId);
+          console.log( base.pets[v].type + '______' + typePet );
+        }
+        //break;
+      } //else break;
+
+    }
+  }
+  return timeBase;
+  //  console.log(timeBase);
+}
+
 /*
 app.get('/task3B/pets', async(req, res) => {
   const type = req.query.type;
