@@ -133,7 +133,7 @@ function volume() {
 //
 
 const pcUrl2 = 'https://gist.githubusercontent.com/isuvorov/55f38b82ce263836dadc0503845db4da/raw/pets.json';
-
+/*
 let base = {};
 fetch(pcUrl2)
   .then(async (res) => {
@@ -142,7 +142,7 @@ fetch(pcUrl2)
   .catch(err => {
     console.log('Что-то пошло не так: 2', err);
   });
-
+*/
 app.get('/task3B', async(req, res) => {
   return await res.json(base);
 
@@ -234,18 +234,6 @@ function getPetsAge(base0, age1, bool) {
           timeBase.push(base1[i]);
         }
         break;
-    }
-  }
-  return timeBase;
-}
-
-function getPets(base1, pet) {
-  let len = base1.length;
-  let timeBase = [];
-  for (var i = 0; i < len;  i++) {
-    if (base1[i].type == pet) {
-      //console.log(base1[i]);
-      timeBase.push(base1[i]);
     }
   }
   return timeBase;
@@ -353,21 +341,26 @@ function getPopulate(baseP/*, typeP, age_gtP, age_ltP*/) {
   //return await res.status(404).send('Not Found');
 }
 function getPopulate2(baseP/*, typeP, age_gtP, age_ltP*/) {
-  const pet = baseP;
-  const user = base.users;
-  const userLen = user.length;
-  const petLen = pet.length;
+  const petLen = base.pets.length;
   let ans0 = '';
-  for (var i = 0; i < petLen; i++) {
-    for (var v = 0; v < userLen; v++) {
-
-      if (pet[i].userId === user[v].id) {
-        //let l = ;
-        ans0 += JSON.stringify(pet[i]).slice(0,-1) + ',"user":' + JSON.stringify(user[v]) + '},';
+  //console.log('getPopulate2_' + baseP.length);
+  for (var i = 0; i < baseP.length; i++) {
+    //console.log('for i _ ' + i);
+    let tempUser = getUserById(baseP[i].userId);
+    console.log(baseP.length + '000_' + tempUser + '_' + pet[i].userId);//JSON.stringify(user[i]).slice(0,-1) + ',"pets":[');
+    ans0 += JSON.stringify(user[i]).slice(0,-1) + ',"pets":[';
+    for (var v = 0; v < petLen; v++) {
+      //console.log('for v _ ' + v);
+      if (base.pets[v].userId === tempUser.id) {
+        //console.log('if central' );
+        ans0 += JSON.stringify(pet[v]) + ',';
         //console.log('temp_' + i + '_' + v);
-        break;
+        //break;
+        //JSON.stringify(user[i]).slice(0,-1) + ','
       }
     }
+    //console.log(ans0.slice(0,-1) + ']},');
+    ans0 = ans0.slice(0,-1) + ']},';
   }
   //console.log('[' + ans.slice(0,-1) + ']');
   //ans0 = ;
@@ -375,40 +368,297 @@ function getPopulate2(baseP/*, typeP, age_gtP, age_ltP*/) {
   //return await res.status(404).send('Not Found');
 }
 
+function getUserById(id) {
+  for (var i = 0; i < base.users.length; i++) {
+    //console.log('*'+i);
+    if (base.users[i].id == id) {
+      console.log(user[i]);
+      return base.users[i];
+      //break;
+    }
+  }
+}
+
+function getPets(base1, pet) {
+  let len = base1.length;
+  let timeBase = [];
+  for (var i = 0; i < base1.length;  i++) {
+    if (base1[i].type == pet) {
+      //console.log(base1[i]);
+      timeBase.push(base1[i]);
+    }
+  }
+  return timeBase;
+}
+
 app.get('/task3B/users/:id1', async(req, res) => {
+  const have_pet = req.query.havePet;
   const id = req.params.id1;
   const user = base.users;
   const len = user.length;
-  let ans = null;
-  console.log('id_'+ id);
-  if (isNaN(+id)) {
-    console.log('NaN')
-    for (var i = 0; i < len; i++) {
-      console.log('*'+i);
-      if (user[i].username == id) {
-        console.log(user[i]);
-        ans = user[i];
-        break;
-      }
-    }
-    if (ans) {
-      return await res.json(ans);
-    } else return await res.status(404).send('Not Found');
+  let ans = [];
+  console.log(!isNaN(7) + '_id_'+ id );
+  if (!isNaN(id)) {
+    console.log('isNaN');
+    ans = getUserById(id);
   } else if (id === 'populate') {
-    for (var i = 0; i < len; i++) {
-      console.log('_'+i);
-      if (user[i].id == id) {
-        console.log(user[i]);
-        ans = user[i];
-        break;
-      }
+    if (have_pet) {
+      console.log('populate_pet');
+      let gp = getPets(base.pets, have_pet);
+      let gpp2 = getPopulate2(gp);
+      console.log(gp[1]);
+      console.log(getPets(base.pets, have_pet)[2]);
+      ans = getPopulate2(getPets(base, have_pet));
+      console.log(ans);
+    } else {
+      console.log('populate');
+      ans = getPopulate(base.pets);
+      console.log(ans);
     }
-    if (ans) {
-      return await res.json(ans);
-    } else return await res.status(404).send('Not Found');
+
+  } else {
+    console.log('username');
+      for (var i = 0; i < len; i++) {
+        console.log('*'+i);
+        if (user[i].username == id) {
+          console.log(user[i]);
+          if (!ans) ans = user[i];
+          //else ans.push(user[i]);
+          break;
+        }
+      }
   }
+  if (ans) {
+    return await res.json(ans);
+  } else return await res.status(404).send('Not Found');
 });
 
+let base = {
+  "users": [
+    {
+      "id": 1,
+      "username": "greenday",
+      "fullname": "Billie Joe Armstrong",
+      "password": "Sweet Children",
+      "values": {
+        "money": "200042$",
+        "origin": "East Bay, California, United States"
+      }
+    },
+    {
+      "id": 2,
+      "username": "offspring",
+      "fullname": "Dexter Holland",
+      "password": "Manic Subsidal",
+      "values": {
+        "money": "100042$",
+        "origin": "Huntington Beach, California, United States"
+      }
+    },
+    {
+      "id": 3,
+      "username": "blink",
+      "fullname": "Mark Hoppus",
+      "password": "Tom DeLonge",
+      "values": {
+        "money": "200202$",
+        "origin": "Poway, California, United States"
+      }
+    },
+    {
+      "id": 4,
+      "username": "blink",
+      "fullname": "Mark Hoppus",
+      "password": "Tom DeLonge",
+      "values": {
+        "money": "107321$",
+        "origin": "Poway, California, United States"
+      }
+    },
+    {
+      "id": 5,
+      "username": "stones",
+      "fullname": "Mick Jagger",
+      "password": "The Stones",
+      "values": {
+        "money": "88632$",
+        "origin": "London, England"
+      }
+    },
+    {
+      "id": 6,
+      "username": "pistols",
+      "fullname": "Ian Paice",
+      "password": "Roundabout",
+      "values": {
+        "money": "387567$",
+        "origin": "Hertford, Hertfordshire, England"
+      }
+    },
+    {
+      "id": 7,
+      "username": "purple",
+      "fullname": "Ian Paice",
+      "password": "Tom DeLonge",
+      "values": {
+        "money": "280002$",
+        "origin": "London, England"
+      }
+    },
+    {
+      "id": 8,
+      "username": "nikolaev",
+      "fullname": "Игорь Юрьевич Николаев",
+      "password": "За любовь!",
+      "values": {
+        "money": "760835р",
+        "origin": "Холмск, Сахалинская область, Россия"
+      }
+    }
+  ],
+  "pets": [
+    {
+      "id": 1,
+      "userId": 1,
+      "type": "dog",
+      "color": "#f44242",
+      "age": 1
+    },
+    {
+      "id": 2,
+      "userId": 2,
+      "type": "dog",
+      "color": "#4242f4",
+      "age": 34
+    },
+    {
+      "id": 3,
+      "userId": 3,
+      "type": "dog",
+      "color": "#42f4c8",
+      "age": 26
+    },
+    {
+      "id": 4,
+      "userId": 4,
+      "type": "dog",
+      "color": "#db7e12",
+      "age": 10
+    },
+    {
+      "id": 5,
+      "userId": 5,
+      "type": "dog",
+      "color": "#f60cca",
+      "age": 31
+    },
+    {
+      "id": 6,
+      "userId": 6,
+      "type": "cat",
+      "color": "#4242f4",
+      "age": 19
+    },
+    {
+      "id": 7,
+      "userId": 7,
+      "type": "dog",
+      "color": "#4242f4",
+      "age": 77
+    },
+    {
+      "id": 8,
+      "userId": 8,
+      "type": "dog",
+      "color": "#4242f4",
+      "age": 20
+    },
+    {
+      "id": 9,
+      "userId": 8,
+      "type": "rat",
+      "color": "#f27497",
+      "age": 15
+    },
+    {
+      "id": 10,
+      "userId": 4,
+      "type": "rat",
+      "color": "#fede13",
+      "age": 15
+    },
+    {
+      "id": 11,
+      "userId": 1,
+      "type": "cat",
+      "color": "#143bf7",
+      "age": 1
+    },
+    {
+      "id": 12,
+      "userId": 2,
+      "type": "dog",
+      "color": "#128215",
+      "age": 34
+    },
+    {
+      "id": 13,
+      "userId": 3,
+      "type": "dog",
+      "color": "#f6cdbf",
+      "age": 26
+    },
+    {
+      "id": 14,
+      "userId": 4,
+      "type": "cat",
+      "color": "#db7e12",
+      "age": 10
+    },
+    {
+      "id": 15,
+      "userId": 5,
+      "type": "dog",
+      "color": "#aa74d6",
+      "age": 31
+    },
+    {
+      "id": 16,
+      "userId": 6,
+      "type": "dog",
+      "color": "#4242f4",
+      "age": 19
+    },
+    {
+      "id": 17,
+      "userId": 7,
+      "type": "cat",
+      "color": "#7fe16a",
+      "age": 77
+    },
+    {
+      "id": 18,
+      "userId": 8,
+      "type": "dog",
+      "color": "#412753",
+      "age": 20
+    },
+    {
+      "id": 19,
+      "userId": 8,
+      "type": "rat",
+      "color": "#9d054d",
+      "age": 15
+    },
+    {
+      "id": 20,
+      "userId": 4,
+      "type": "rat",
+      "color": "#fd6a70",
+      "age": 15
+    }
+  ]
+};
 app.listen(3000, () => {
   console.log('Your app listening on port 3000!');
 });
