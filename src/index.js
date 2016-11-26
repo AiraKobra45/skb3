@@ -151,9 +151,9 @@ app.get('/task3B', async(req, res) => {
 app.get('/task3B/users', async(req, res) => {
   //console.log('1');
   const type = req.query.havePet;
-  if (type === 'cat') {
+  if (type) {
     //console.log('2');
-    return await res.json(usersHavePet(true));
+    return await res.json(usersHavePet(type));
   } else {
     //console.log('3');
     return await res.json(base.users);
@@ -161,23 +161,31 @@ app.get('/task3B/users', async(req, res) => {
 
 });
 
-function usersHavePet(bool ) {
-  //console.log('2*1');
+function usersHavePet( type ) {
+  console.log('type: ' + type);
   let timeBase = [];
   let usersLen = base.users.length;
   let petsLen = base.pets.length;
-  for (var i = 0; i < usersLen; i++) {
-    //console.log('2*2');
-    for (var v = 0; v < petsLen; v++) {
-      //console.log('2*3');
-      if ( base.users[i].Id == base.pets[v].userId) {
-        //console.log('2*4');
-        console.log(i + '_' + v);
-        if (base.pets[v].type == 'cat') {
-         // console.log('2*5');
-          timeBase.push(base.users[i]);
-          console.log(base.users[i].Id + '___' + base.pets[v].userId);
-          console.log( base.pets[v].type + '______' + typePet );
+  console.log( usersLen + '_' + petsLen);
+  for (var ii = 0; ii < usersLen; ii++) {
+    console.log('2*2');
+    let user =  base.users[ii];
+    console.log(user);
+    for (var vi = 0; vi < petsLen; vi++) {
+      console.log(ii + '_*_' + vi);
+      let pet = base.pets;
+      //console.log(pet);
+      if ( user.id == pet[vi].userId) {
+        //break;
+        console.log('2*4');
+        console.log(ii + '_' + vi);
+        if (pet[vi].type == type) {
+          console.log('2*5');
+          timeBase.push(user);
+          break;
+          console.log(base.users[ii].Id + '___' + base.pets[vi].userId);
+          console.log( base.pets[vi].type + '______' + type );
+          //console.log(timeBase);
         }
         //break;
       } //else break;
@@ -185,47 +193,28 @@ function usersHavePet(bool ) {
     }
   }
   return timeBase;
-  //  console.log(timeBase);
+  console.log(timeBase);
 }
-
-/*
-app.get('/task3B/pets', async(req, res) => {
-  const type = req.query.type;
-  let len = base.pets.length;
-  let timeBase = [];
-  if (type === 'cat') {
-    for (var i = 0; i < len;  i++) {
-      if (base.pets[i].type === 'cat') {
-        timeBase.push(base.pets[i]);
-      }
-    }
-   return res.json((timeBase));
-  } else  return await res.send(base.pets);
-});*/
 
 app.get('/task3B/pets', async(req, res) => {
   const type = req.query.type;
   const age_gt = req.query.age_gt;
   const age_lt = req.query.age_lt;
-  //console.log('* '+ type + '* '+ age_gt + '* '+ age_lt);
-  //console.log('Start');
-  if (type) {//console.log('1');
-    //return await res.json(getPets(base.pets, type, age_gt));
-    if (age_gt && !age_lt) { //console.log('2');
+  if (type) {
+    if (age_gt && !age_lt) {
       return await res.json(getPets(getPetsAge(base.pets, age_gt, true), type));
-    } else if (age_lt && !age_gt) {//console.log('3');
+    } else if (age_lt && !age_gt) {
       return await res.json(getPets(getPetsAge(base.pets, age_lt, false), type));
-    } else if (age_lt && age_gt) {//console.log('4');
+    } else if (age_lt && age_gt) {
       return await res.json(getPets(getPetsAge(getPetsAge(base.pets,age_lt, false),age_gt,true), type));
-    } else //console.log('Type');
+    } else
       return await res.json(getPets(base.pets, type));
-  } else if (age_gt && !age_lt) { //console.log('5');
+  } else if (age_gt && !age_lt) {
     return await res.json(getPetsAge(base.pets, age_gt, true));
-  } else if (age_lt && !age_gt) {//console.log('6');
+  } else if (age_lt && !age_gt) {
     return await res.json(getPetsAge(base.pets, age_lt, false));
-  } else //console.log('7');
+  } else
     return await res.json(base.pets);
-  //console.log('The End');
 });
 
 function getPetsAge(base0, age1, bool) {
@@ -238,13 +227,11 @@ function getPetsAge(base0, age1, bool) {
       case true:
         if (base1[i].age > age) {
           timeBase.push(base1[i]);
-          //console.log(base1[i].id + '_' + base1[i].age + '>' + age);
           }
         break;
       case false:
         if (base1[i].age < age) {
           timeBase.push(base1[i]);
-          //console.log(base1[i].id + '_' +base1[i].age + '<' + age);
         }
         break;
     }
@@ -257,42 +244,169 @@ function getPets(base1, pet) {
   let timeBase = [];
   for (var i = 0; i < len;  i++) {
     if (base1[i].type == pet) {
-      console.log(base1[i]);
+      //console.log(base1[i]);
       timeBase.push(base1[i]);
     }
   }
   return timeBase;
 }
-/*
-function getPets(base1, pet, age1) {
-  let len = base1.length;
-  let timeBase = [];
-  let age = +age1;
-  for (var i = 0; i < len;  i++) {
-    if (base1[i].type == pet) {
-      if ((0 < age) && (age < base1[i].age) ) {
-        timeBase.push(base1[i]);
+
+app.get('/task3B/pets/:id1', async(req, res) => {
+  const type = req.query.type;
+  const age_gt = req.query.age_gt;
+  const age_lt = req.query.age_lt;
+  const id = req.params.id1;
+  const pet = base.pets;
+  const user = base.users;
+  //const userLen = user.length;
+  const petLen = pet.length;
+
+  let ans = null;
+
+  if (!isNaN(id)) {
+    for (var ic = 0; ic < petLen; ic++) {
+      //console.log('_'+ic);
+      if (pet[ic].id == id) {
+        //console.log(pet[ic]);
+        ans = pet[ic];
+        break;
+      }
+    }
+    if (ans) {
+      return await res.json(ans);
+    } else return await res.status(404).send('Not Found');
+  } else
+    if (id === 'populate') {
+      let temp_base = base.pets;
+      if (!isNaN(age_gt)) temp_base = getPetsAge(temp_base, age_gt, true);
+      if (!isNaN(age_lt)) temp_base = getPetsAge(temp_base, age_lt, false);
+      if (type)           temp_base = getPets(temp_base, type);
+      //console.log(temp_base);
+
+    let ans = getPopulate(temp_base/*, type, age_gt, age_lt*/);
+    if (ans) {
+      return await res.json(ans);
+    } else return await res.status(404).send('Not Found');
+  }
+});
+
+app.get('/task3B/pets/:id1/populate', async(req, res) => {
+  const type = req.query.type;
+  const age_gt = req.query.age_gt;
+  const age_lt = req.query.age_lt;
+  const id = req.params.id1;
+  const pet = base.pets;
+  const user = base.users;
+  //const userLen = user.length;
+  const petLen = pet.length;
+  let ans = [];
+
+  if (!isNaN(id)) {
+    for (var ic = 0; ic < petLen; ic++) {
+      //console.log('_'+ic);
+      if (pet[ic].id == id) {
+        ans.push(pet[ic]);
+        //console.log(ans);
+        break;
+      }
+    }
+    if (ans) {
+      console.log(getPopulate(ans)[0]);
+      return await res.json(getPopulate(ans)[0]);
+    } else return await res.status(404).send('Not Found');
+  } /*else
+  if (id === 'populate') {
+    let temp_base = base.pets;
+    if (!isNaN(age_gt)) temp_base = getPetsAge(temp_base, age_gt, true);
+    if (!isNaN(age_lt)) temp_base = getPetsAge(temp_base, age_lt, false);
+    if (type)           temp_base = getPets(temp_base, type);
+    //console.log(temp_base);
+
+    let ans = getPopulate(temp_base//, type, age_gt, age_lt);
+    if (ans) {
+      return await res.json(ans);
+    } else return await res.status(404).send('Not Found');
+  }*/
+
+});
+
+function getPopulate(baseP/*, typeP, age_gtP, age_ltP*/) {
+  const pet = baseP;
+  const user = base.users;
+  const userLen = user.length;
+  const petLen = pet.length;
+  let ans0 = '';
+  for (var i = 0; i < petLen; i++) {
+    for (var v = 0; v < userLen; v++) {
+
+      if (pet[i].userId === user[v].id) {
+        //let l = ;
+        ans0 += JSON.stringify(pet[i]).slice(0,-1) + ',"user":' + JSON.stringify(user[v]) + '},';
+        //console.log('temp_' + i + '_' + v);
+        break;
       }
     }
   }
-  return timeBase;
+  //console.log('[' + ans.slice(0,-1) + ']');
+  //ans0 = ;
+  return JSON.parse('[' + ans0.slice(0,-1) + ']');
+  //return await res.status(404).send('Not Found');
 }
-*/
-app.get('/task3B/pets/:id1', async(req, res) => {
-  const id = req.params;
-  console.log(id);
-  if (base.pets[id.id1 - 1]) {
-    return await res.json(base['pets'][id.id1-1]);
-  } else  return await res.status(404).send('Not Found');
-});
+function getPopulate2(baseP/*, typeP, age_gtP, age_ltP*/) {
+  const pet = baseP;
+  const user = base.users;
+  const userLen = user.length;
+  const petLen = pet.length;
+  let ans0 = '';
+  for (var i = 0; i < petLen; i++) {
+    for (var v = 0; v < userLen; v++) {
+
+      if (pet[i].userId === user[v].id) {
+        //let l = ;
+        ans0 += JSON.stringify(pet[i]).slice(0,-1) + ',"user":' + JSON.stringify(user[v]) + '},';
+        //console.log('temp_' + i + '_' + v);
+        break;
+      }
+    }
+  }
+  //console.log('[' + ans.slice(0,-1) + ']');
+  //ans0 = ;
+  return JSON.parse('[' + ans0.slice(0,-1) + ']');
+  //return await res.status(404).send('Not Found');
+}
 
 app.get('/task3B/users/:id1', async(req, res) => {
-  const id = req.params;
-  console.log(id);
-  if (base.users[id.id1 - 1]) {
-    return await res.json(base['users'][id.id1-1]);
-  } else  return await res.status(404).send('Not Found');
-
+  const id = req.params.id1;
+  const user = base.users;
+  const len = user.length;
+  let ans = null;
+  console.log('id_'+ id);
+  if (isNaN(+id)) {
+    console.log('NaN')
+    for (var i = 0; i < len; i++) {
+      console.log('*'+i);
+      if (user[i].username == id) {
+        console.log(user[i]);
+        ans = user[i];
+        break;
+      }
+    }
+    if (ans) {
+      return await res.json(ans);
+    } else return await res.status(404).send('Not Found');
+  } else if (id === 'populate') {
+    for (var i = 0; i < len; i++) {
+      console.log('_'+i);
+      if (user[i].id == id) {
+        console.log(user[i]);
+        ans = user[i];
+        break;
+      }
+    }
+    if (ans) {
+      return await res.json(ans);
+    } else return await res.status(404).send('Not Found');
+  }
 });
 
 app.listen(3000, () => {
