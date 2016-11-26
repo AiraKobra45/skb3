@@ -162,29 +162,29 @@ app.get('/task3B/users', async(req, res) => {
 });
 
 function usersHavePet( type ) {
-  console.log('type: ' + type);
+  //console.log('type: ' + type);
   let timeBase = [];
   let usersLen = base.users.length;
   let petsLen = base.pets.length;
-  console.log( usersLen + '_' + petsLen);
+  //console.log( usersLen + '_' + petsLen);
   for (var ii = 0; ii < usersLen; ii++) {
-    console.log('2*2');
+    //console.log('2*2');
     let user =  base.users[ii];
-    console.log(user);
+    //console.log(user);
     for (var vi = 0; vi < petsLen; vi++) {
-      console.log(ii + '_*_' + vi);
+      //console.log(ii + '_*_' + vi);
       let pet = base.pets;
       //console.log(pet);
       if ( user.id == pet[vi].userId) {
         //break;
-        console.log('2*4');
-        console.log(ii + '_' + vi);
+        //console.log('2*4');
+        //console.log(ii + '_' + vi);
         if (pet[vi].type == type) {
-          console.log('2*5');
+          //console.log('2*5');
           timeBase.push(user);
           break;
-          console.log(base.users[ii].Id + '___' + base.pets[vi].userId);
-          console.log( base.pets[vi].type + '______' + type );
+          //console.log(base.users[ii].Id + '___' + base.pets[vi].userId);
+          //console.log( base.pets[vi].type + '______' + type );
           //console.log(timeBase);
         }
         //break;
@@ -192,8 +192,8 @@ function usersHavePet( type ) {
 
     }
   }
+  //console.log(timeBase);
   return timeBase;
-  console.log(timeBase);
 }
 
 app.get('/task3B/pets', async(req, res) => {
@@ -340,15 +340,26 @@ function getPopulate(baseP/*, typeP, age_gtP, age_ltP*/) {
   return JSON.parse('[' + ans0.slice(0,-1) + ']');
   //return await res.status(404).send('Not Found');
 }
-function getPopulate2(baseP/*, typeP, age_gtP, age_ltP*/) {
+function getPopulate2 (arr, type) {
+  //console.log('*hello!*');
+  let pets = getPets(arr.pets, type);
+  //console.log(pets);
+  for (var i = 0; i < pets.length; i++) {
+    //console.log('_' + i + '_' + pets[i].userId);
+    console.log(getUserById(pets[i].userId));
+  }
+}
+
+function getPopulate3 (baseP/*, typeP, age_gtP, age_ltP*/) {
   const petLen = base.pets.length;
   let ans0 = '';
   //console.log('getPopulate2_' + baseP.length);
   for (var i = 0; i < baseP.length; i++) {
     //console.log('for i _ ' + i);
     let tempUser = getUserById(baseP[i].userId);
-    console.log(baseP.length + '000_' + tempUser + '_' + pet[i].userId);//JSON.stringify(user[i]).slice(0,-1) + ',"pets":[');
-    ans0 += JSON.stringify(user[i]).slice(0,-1) + ',"pets":[';
+    console.log(tempUser);
+    console.log(JSON.stringify(tempUser).slice(0,-1) + ',"pets":[');//baseP.length + '000_' + tempUser + '_' + pet[i].userId);//
+    ans0 += JSON.stringify(tempUser).slice(0,-1) + ',"pets":[';
     for (var v = 0; v < petLen; v++) {
       //console.log('for v _ ' + v);
       if (base.pets[v].userId === tempUser.id) {
@@ -372,7 +383,7 @@ function getUserById(id) {
   for (var i = 0; i < base.users.length; i++) {
     //console.log('*'+i);
     if (base.users[i].id == id) {
-      console.log(user[i]);
+      //console.log(base.users[i]);
       return base.users[i];
       //break;
     }
@@ -404,12 +415,12 @@ app.get('/task3B/users/:id1', async(req, res) => {
   } else if (id === 'populate') {
     if (have_pet) {
       console.log('populate_pet');
-      let gp = getPets(base.pets, have_pet);
-      let gpp2 = getPopulate2(gp);
-      console.log(gp[1]);
-      console.log(getPets(base.pets, have_pet)[2]);
-      ans = getPopulate2(getPets(base, have_pet));
-      console.log(ans);
+      //let gp = getPets(base, have_pet);
+      console.log(getPopulate2(base, have_pet));
+      //console.log(gp[1]);
+      //console.log(getPets(base.pets, have_pet)[2]);
+      //ans = gpp2;//getPopulate2(getPets(base, have_pet));
+      //console.log(ans);
     } else {
       console.log('populate');
       ans = getPopulate(base.pets);
