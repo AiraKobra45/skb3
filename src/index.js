@@ -299,7 +299,7 @@ app.get('/task3B/pets/:id1/populate', async(req, res) => {
       }
     }
     if (ans) {
-      console.log(getPopulate(ans)[0]);
+      //console.log(getPopulate(ans)[0]);
       return await res.json(getPopulate(ans)[0]);
     } else return await res.status(404).send('Not Found');
   } /*else
@@ -341,6 +341,47 @@ function getPopulate(baseP/*, typeP, age_gtP, age_ltP*/) {
   //return await res.status(404).send('Not Found');
 }
 
+function getPopulate2() {
+  const pet = base.pets;
+  const user = base.users;
+  const userLen = user.length;
+  const petLen = pet.length;
+  let temp = '';
+  let ans0 = '\n\n\n [';
+  //console.log(user[3]);
+  //console.log(pet[5]);
+  console.log('[');
+  for (var i = 0; i < userLen; i++) {
+    //console.log(/*'i _ ' + i + */'\n' + JSON.stringify(user[i]).slice(0,-1) + ',\n"pets":[');
+    //temp = JSON.stringify(user[i]);
+    //temp = temp.slice(0,-1) + '_______________________';
+    ans0 += JSON.stringify(user[i]).slice(0,-1) + ',\n"pets":[';
+    //console.log(ans0);
+    for (var j = 0; j < petLen; j++) {
+      //console.log('j _ ' + j);
+      if (pet[j].userId === user[i].id) {
+        //let l = ;
+        //console.log(JSON.stringify(pet[j]) + ',');/*'if _ ' + i + '_' + j + '\n' + */
+        ans0 += JSON.stringify(pet[j]) + ',';
+        //console.log('temp_' + i + '_' + v);
+        //break;
+      }
+    }
+    ans0 = ans0.slice(0,-1) + ']},';
+    //ans0 =  temp + ']},';
+    //console.log(']},');
+    //ans0 += ans0.slice(0,-1) + '],';//JSON.stringify(pet[i]).slice(0,-1) + ',';+ JSON.stringify(user[v]) + '},';
+  }
+  ans0 = ans0.slice(0,-1) + ']';
+  //ans0 += temp + ']\n\n\n';
+  //console.log(']}');
+  ans0 = JSON.parse(ans0);
+  console.log('\n\n' +ans0);
+  //ans0 = ;
+  return ans0;
+  //return await res.status(404).send('Not Found');
+}
+
 /*
 function getPopulate3 (baseP/*, typeP, age_gtP, age_ltP*///) {
 /*  const petLen = base.pets.length;
@@ -372,13 +413,13 @@ function getPopulate3 (baseP/*, typeP, age_gtP, age_ltP*///) {
 }*/
 
 function getUserById(id_) {
-  for (var i = 0; i < base.users.length; i++) {
-    //console.log('*'+i);
-    let tempUser = base.users[i];
-    //console.log(tempUser);
-    if (tempUser.id === id_) {
-      //console.log('OK');
-      return tempUser;
+  let tempUser = base.users;
+  for (var i = 0; i < tempUser.length; i++) {
+    console.log('*'+i);
+    console.log(tempUser[i]);
+    if (tempUser[i].id == id_) {
+      console.log('OK');
+      return tempUser[i];
       //break;
     }
   }
@@ -405,7 +446,8 @@ app.get('/task3B/users/:id1', async(req, res) => {
   console.log(!isNaN(7) + '_id_'+ id );
   if (!isNaN(id)) {
     console.log('isNaN');
-    ans.push(getUserById(id));
+    ans = getUserById(id);
+    console.log(getUserById(id));
   } else if (id === 'populate') {
     if (have_pet) {
       console.log('populate_pet');
@@ -417,9 +459,9 @@ app.get('/task3B/users/:id1', async(req, res) => {
       //ans = getPopulate2(base, have_pet);//gpp2;//getPopulate2(getPets(base, have_pet));
       //console.log(ans);
     } else {
-      console.log('populate');
-      ans = getPopulate(base.pets);
-      console.log(ans);
+      console.log('populate1');
+      ans = getPopulate2();
+      //console.log(ans);
     }
   } else {
     console.log('username');
@@ -427,7 +469,7 @@ app.get('/task3B/users/:id1', async(req, res) => {
         console.log('*'+i);
         if (user[i].username == id) {
           console.log(user[i]);
-          if (!ans) ans = user[i];
+          /*if (!ans)*/ ans = user[i];
           //else ans.push(user[i]);
           break;
         }
@@ -665,5 +707,5 @@ let base = {
   ]
 };
 app.listen(3000, () => {
-  console.log('Your app listening on port 3000!');
+  console.log('****************************************************************************************************************************************************************Your app listening on port 3000!');
 });
