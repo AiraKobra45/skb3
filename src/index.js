@@ -340,21 +340,13 @@ function getPopulate(baseP/*, typeP, age_gtP, age_ltP*/) {
   return JSON.parse('[' + ans0.slice(0,-1) + ']');
   //return await res.status(404).send('Not Found');
 }
-function getPopulate2 (arr, type) {
-  //console.log('*hello!*');
-  let pets = getPets(arr.pets, type);
-  //console.log(pets);
-  for (var i = 0; i < pets.length; i++) {
-    //console.log('_' + i + '_' + pets[i].userId);
-    console.log(getUserById(pets[i].userId));
-  }
-}
 
-function getPopulate3 (baseP/*, typeP, age_gtP, age_ltP*/) {
-  const petLen = base.pets.length;
+/*
+function getPopulate3 (baseP/*, typeP, age_gtP, age_ltP*///) {
+/*  const petLen = base.pets.length;
   let ans0 = '';
   //console.log('getPopulate2_' + baseP.length);
-  for (var i = 0; i < baseP.length; i++) {
+/*  for (var i = 0; i < baseP.length; i++) {
     //console.log('for i _ ' + i);
     let tempUser = getUserById(baseP[i].userId);
     console.log(tempUser);
@@ -362,7 +354,7 @@ function getPopulate3 (baseP/*, typeP, age_gtP, age_ltP*/) {
     ans0 += JSON.stringify(tempUser).slice(0,-1) + ',"pets":[';
     for (var v = 0; v < petLen; v++) {
       //console.log('for v _ ' + v);
-      if (base.pets[v].userId === tempUser.id) {
+   /*   if (base.pets[v].userId === tempUser.id) {
         //console.log('if central' );
         ans0 += JSON.stringify(pet[v]) + ',';
         //console.log('temp_' + i + '_' + v);
@@ -375,16 +367,18 @@ function getPopulate3 (baseP/*, typeP, age_gtP, age_ltP*/) {
   }
   //console.log('[' + ans.slice(0,-1) + ']');
   //ans0 = ;
-  return JSON.parse('[' + ans0.slice(0,-1) + ']');
+ /* return JSON.parse('[' + ans0.slice(0,-1) + ']');
   //return await res.status(404).send('Not Found');
-}
+}*/
 
-function getUserById(id) {
+function getUserById(id_) {
   for (var i = 0; i < base.users.length; i++) {
     //console.log('*'+i);
-    if (base.users[i].id == id) {
-      //console.log(base.users[i]);
-      return base.users[i];
+    let tempUser = base.users[i];
+    //console.log(tempUser);
+    if (tempUser.id === id_) {
+      //console.log('OK');
+      return tempUser;
       //break;
     }
   }
@@ -411,22 +405,22 @@ app.get('/task3B/users/:id1', async(req, res) => {
   console.log(!isNaN(7) + '_id_'+ id );
   if (!isNaN(id)) {
     console.log('isNaN');
-    ans = getUserById(id);
+    ans.push(getUserById(id));
   } else if (id === 'populate') {
     if (have_pet) {
       console.log('populate_pet');
       //let gp = getPets(base, have_pet);
-      console.log(getPopulate2(base, have_pet));
-      //console.log(gp[1]);
+      //console.log(getPopulate2(base, have_pet));
+      console.log(getUserById(5));
+      console.log(base.users[6]);
       //console.log(getPets(base.pets, have_pet)[2]);
-      //ans = gpp2;//getPopulate2(getPets(base, have_pet));
+      //ans = getPopulate2(base, have_pet);//gpp2;//getPopulate2(getPets(base, have_pet));
       //console.log(ans);
     } else {
       console.log('populate');
       ans = getPopulate(base.pets);
       console.log(ans);
     }
-
   } else {
     console.log('username');
       for (var i = 0; i < len; i++) {
