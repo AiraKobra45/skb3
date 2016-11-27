@@ -420,24 +420,54 @@ function getUserById(id_) {
     }
   }
 }
-
+/*
 function getPopById(id_) {
   let tempUser = getPopulate2();
+  let len = tempUser.length;
+  let ans = null;
   for (var i = 0; i < tempUser.length; i++) {
     //console.log('*'+i);
     console.log(tempUser[i]);
     if (tempUser[i].id == id_) {
       console.log('OK');
-      return tempUser[i];
-      //break;
+      ans = tempUser[i];
+      break;
     }
   }
+  if (ans) {return ans} else {return undefined};
+}*/
+
+function getPopById(id_) {
+  let tempUser = getPopulate2();
+  let len = tempUser.length;
+  let ans = undefined;
+  if (!isNaN(id_)) {
+    for (var i = 0; i < len; i++) {
+      if (tempUser[i].id == id_) {
+        console.log('OK_id');
+        ans = tempUser[i];
+        break;
+      }
+    }
+  } else {
+    for (var j = 0; j < len; j++) {
+      console.log(tempUser[j]);
+      if (tempUser[j].username == id_) {
+        console.log('OK_name');
+        ans = tempUser[j];
+        console.log(tempUser);
+        break;
+      }
+    }
+  }
+  return ans;
 }
+
 
 function getPets(base1, pet) {
   let len = base1.length;
   let timeBase = [];
-  for (var i = 0; i < base1.length;  i++) {
+  for (var i = 0; i < len;  i++) {
     if (base1[i].type == pet) {
       //console.log(base1[i]);
       timeBase.push(base1[i]);
@@ -447,14 +477,16 @@ function getPets(base1, pet) {
 }
 
 app.get('/task3B/users/:id1/populate', async(req, res) => {
-  console.log('test 56');
+  //console.log('test 56');
   const id = req.params.id1;
-  console.log(id);
+  //console.log(id);
   let ans = [];
-  if (!isNaN(id)) {
+  if (id) {
     ans = getPopById(id);
   }
-  return res.json(ans);
+  if (ans) {
+    return await res.json(ans);
+  } else return await res.status(404).send('Not Found');
 });
 
 app.get('/task3B/users/:id1', async(req, res) => {
@@ -462,7 +494,7 @@ app.get('/task3B/users/:id1', async(req, res) => {
   const id = req.params.id1;
   const user = base.users;
   const len = user.length;
-  let ans = [];
+  let ans = null;
   console.log(!isNaN(7) + '_id_'+ id );
   if (!isNaN(id)) {
     console.log('isNaN');
