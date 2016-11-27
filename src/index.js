@@ -346,40 +346,36 @@ function getPopulate2() {
   const user = base.users;
   const userLen = user.length;
   const petLen = pet.length;
-  let temp = '';
   let ans0 = '\n\n\n [';
-  //console.log(user[3]);
-  //console.log(pet[5]);
   console.log('[');
   for (var i = 0; i < userLen; i++) {
-    //console.log(/*'i _ ' + i + */'\n' + JSON.stringify(user[i]).slice(0,-1) + ',\n"pets":[');
-    //temp = JSON.stringify(user[i]);
-    //temp = temp.slice(0,-1) + '_______________________';
     ans0 += JSON.stringify(user[i]).slice(0,-1) + ',\n"pets":[';
-    //console.log(ans0);
     for (var j = 0; j < petLen; j++) {
-      //console.log('j _ ' + j);
       if (pet[j].userId === user[i].id) {
-        //let l = ;
-        //console.log(JSON.stringify(pet[j]) + ',');/*'if _ ' + i + '_' + j + '\n' + */
         ans0 += JSON.stringify(pet[j]) + ',';
-        //console.log('temp_' + i + '_' + v);
-        //break;
       }
     }
     ans0 = ans0.slice(0,-1) + ']},';
-    //ans0 =  temp + ']},';
-    //console.log(']},');
-    //ans0 += ans0.slice(0,-1) + '],';//JSON.stringify(pet[i]).slice(0,-1) + ',';+ JSON.stringify(user[v]) + '},';
   }
   ans0 = ans0.slice(0,-1) + ']';
-  //ans0 += temp + ']\n\n\n';
-  //console.log(']}');
   ans0 = JSON.parse(ans0);
-  console.log('\n\n' +ans0);
-  //ans0 = ;
   return ans0;
-  //return await res.status(404).send('Not Found');
+}
+
+function havePet (base0, type) {
+  const baseLen = base0.length;
+  console.log(baseLen);
+  let ans0 = [];
+  for (var i = 0; i < baseLen; i++) {
+    const petsLen = base0[i].pets.length;
+      for (var j = 0; j < petsLen; j++) {
+      if (base0[i].pets[j].type === type) {
+        ans0.push(base0[i]);
+        break;
+      }
+    }
+  }
+  return ans0;
 }
 
 /*
@@ -453,8 +449,10 @@ app.get('/task3B/users/:id1', async(req, res) => {
       console.log('populate_pet');
       //let gp = getPets(base, have_pet);
       //console.log(getPopulate2(base, have_pet));
-      console.log(getUserById(5));
-      console.log(base.users[6]);
+      //console.log(getUserById(5));
+      //console.log(base.users[6]);
+      //console.log(havePet(getPopulate2(), have_pet)[0]);
+      ans = (havePet(getPopulate2(), have_pet));
       //console.log(getPets(base.pets, have_pet)[2]);
       //ans = getPopulate2(base, have_pet);//gpp2;//getPopulate2(getPets(base, have_pet));
       //console.log(ans);
