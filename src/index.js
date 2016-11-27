@@ -421,6 +421,19 @@ function getUserById(id_) {
   }
 }
 
+function getPopById(id_) {
+  let tempUser = getPopulate2();
+  for (var i = 0; i < tempUser.length; i++) {
+    //console.log('*'+i);
+    console.log(tempUser[i]);
+    if (tempUser[i].id == id_) {
+      console.log('OK');
+      return tempUser[i];
+      //break;
+    }
+  }
+}
+
 function getPets(base1, pet) {
   let len = base1.length;
   let timeBase = [];
@@ -432,6 +445,17 @@ function getPets(base1, pet) {
   }
   return timeBase;
 }
+
+app.get('/task3B/users/:id1/populate', async(req, res) => {
+  console.log('test 56');
+  const id = req.params.id1;
+  console.log(id);
+  let ans = [];
+  if (!isNaN(id)) {
+    ans = getPopById(id);
+  }
+  return res.json(ans);
+});
 
 app.get('/task3B/users/:id1', async(req, res) => {
   const have_pet = req.query.havePet;
