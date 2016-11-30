@@ -772,10 +772,103 @@ let base = {
 
 // pokemon
 // pokemon/1
+function getPok (arr, attr) {
+  let out = [];
+  const len = arr.length;
+  for (var i = 0; i < len; i++) {
+    let temp = [];
+    temp.push(arr[i]);
+    for (var j = i + 1; j < len; j++) {
+      if (attr == 'angular') {
+        if ((arr[i].weight/arr[i].height) == (arr[j].weight/arr[j].height)) {
+          temp.push(arr[j]);
+          i = j;
+        }
+      } else {
+        if (arr[i][attr] == arr[j][attr]) {
+          temp.push(arr[j]);
+          i = j;
+        }
+      }
+
+    }
+    temp = _.sortBy(temp, pokemon => (pokemon.name));
+    //console.log('temp');
+    //console.log(temp);
+    //console.log('\n*************************************\n');
+    for (var c = 0; c < temp.length; c++) {
+      out.push(temp[c].name);
+    }
+  }
+  return out;
+}
+function getArr (arr, set, lim ) {
+  const end = set + lim;
+  arr = arr.slice(set, end);
+  let out = [];
+  const len = arr.length;
+  for (var i = 0; i < len; i++) {
+    out.push(arr[i].name);
+  }
+  return out;
+}
 
 app.get('/task3C', async (req, res) => {
-  const sortPokemons = _.sortBy(pokAPI, pokemon => (pokemon.name));
-  return res.json( sortPokemons.slice(0,20));
+  const offset = (+req.query.offset || 0);
+  const limit = (+req.query.limit || 20);
+  console.log(req.params);
+  console.log(req.query);
+  console.log('******************************************************');
+
+  const sortPokemons = _.sortBy(pokemonsAPI, pokemon => (pokemon.name));
+  return res.json( getArr(sortPokemons, offset, limit));
+
+});
+
+app.get('/task3C/:par1', async (req, res) => {
+  console.log(req.params);
+  console.log(req.query);
+  console.log('******************************************************');
+  const offset = (+req.query.offset || 0);
+  const limit = (+req.query.limit || 20);
+
+  switch (req.params.par1) {
+    case 'huge': {
+      let sortPokemons = _.sortBy(pokemonsAPI, pokemon => -(pokemon.height));
+      sortPokemons = getPok(sortPokemons, 'height');
+      return res.json( sortPokemons.slice(offset, offset + limit));//getArr(sortPokemons, offset, limit));
+    }
+    case 'micro': {
+      let sortPokemons = _.sortBy(pokemonsAPI, pokemon => (pokemon.height));
+      sortPokemons = getPok(sortPokemons, 'height');
+      console.log(offset + limit);
+      return res.json( sortPokemons.slice(offset, offset + limit));//getArr(sortPokemons, offset, limit));
+    }
+    case 'light': {
+      let sortPokemons = _.sortBy(pokemonsAPI, pokemon => (pokemon.weight));
+      sortPokemons = getPok(sortPokemons, 'weight');
+      console.log(offset + limit);
+      return res.json( sortPokemons.slice(offset, offset + limit));//getArr(sortPokemons, offset, limit));
+    }
+    case 'heavy': {
+      let sortPokemons = _.sortBy(pokemonsAPI, pokemon => -(pokemon.weight));
+      sortPokemons = getPok(sortPokemons, 'weight');
+      console.log(offset + limit);
+      return res.json( sortPokemons.slice(offset, offset + limit));//getArr(sortPokemons, offset, limit));
+    }
+    case 'angular': {
+      let sortPokemons = _.sortBy(pokemonsAPI, pokemon => (pokemon.weight/pokemon.height));
+      sortPokemons = getPok(sortPokemons, 'angular');
+      console.log(offset + limit);
+      return res.json( sortPokemons.slice(offset, offset + limit));//getArr(sortPokemons, offset, limit));
+    }
+    case 'fat': {
+      let sortPokemons = _.sortBy(pokemonsAPI, pokemon => -(pokemon.weight/pokemon.height));
+      sortPokemons = getPok(sortPokemons, 'angular');
+      console.log(offset + limit);
+      return res.json( sortPokemons.slice(offset, offset + limit));//getArr(sortPokemons, offset, limit));
+    }
+  }
 
 });
 
@@ -838,7 +931,7 @@ app.listen(3000, () => {
 
 
 
-var pokAPI = ["abomasnow","abomasnow-mega","abra","absol","absol-mega","accelgor","aegislash-blade","aegislash-shield","aerodactyl","aerodactyl-mega","aggron","aggron-mega","aipom","alakazam","alakazam-mega","alomomola","altaria","altaria-mega","amaura","ambipom"];
+//var pokAPI = ["abomasnow","abomasnow-mega","abra","absol","absol-mega","accelgor","aegislash-blade","aegislash-shield","aerodactyl","aerodactyl-mega","aggron","aggron-mega","aipom","alakazam","alakazam-mega","alomomola","altaria","altaria-mega","amaura","ambipom"];
 
 var pokemonsAPI =
   [
